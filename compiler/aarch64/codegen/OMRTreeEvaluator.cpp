@@ -6026,8 +6026,8 @@ OMR::ARM64::TreeEvaluator::arraysetEvaluator(TR::Node *node, TR::CodeGenerator *
    return NULL;
    }
 
-TR::Register *
-OMR::ARM64::TreeEvaluator::arraycmpEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+static TR::Register *
+arraycmpEvaluatorHelper(TR::Node *node, TR::CodeGenerator *cg, bool isArrayCmpLen)
    {
    /*
     * Generating following instruction sequence
@@ -6133,7 +6133,6 @@ OMR::ARM64::TreeEvaluator::arraycmpEvaluator(TR::Node *node, TR::CodeGenerator *
    TR::Node *src2Node = node->getSecondChild();
    TR::Node *lengthNode = node->getThirdChild();
    bool isLengthGreaterThan15 = lengthNode->getOpCode().isLoadConst() && lengthNode->getConstValue() > 15;
-   const bool isArrayCmpLen = node->isArrayCmpLen();
    TR_ARM64ScratchRegisterManager *srm = cg->generateScratchRegisterManager(12);
 
    TR::Register *savedSrc1Reg = cg->evaluate(src1Node);
@@ -6379,6 +6378,18 @@ OMR::ARM64::TreeEvaluator::arraycmpEvaluator(TR::Node *node, TR::CodeGenerator *
    cg->decReferenceCount(lengthNode);
 
    return resultReg;
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::arraycmpEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   return arraycmpEvaluatorHelper(node, cg, false);
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::arraycmplenEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   return arraycmpEvaluatorHelper(node, cg, true);
    }
 
 static void

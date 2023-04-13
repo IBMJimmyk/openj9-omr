@@ -7204,6 +7204,22 @@ OPCODE_MACRO(\
    /* .description          =    Inline code for memory comparison of part of an array */ \
 )
 OPCODE_MACRO(\
+   /* .opcode               = */ arraycmplen, \
+   /* .name                 = */ "arraycmplen", \
+   /* .properties1          = */ ILProp1::Call | ILProp1::HasSymbolRef, \
+   /* .properties2          = */ ILProp2::CondCodeComputation, \
+   /* .properties3          = */ ILProp3::LikeUse | ILProp3::LikeDef | ILProp3::SkipDynamicLitPoolOnInts, \
+   /* .properties4          = */ 0, \
+   /* .dataType             = */ TR::Int32, \
+   /* .typeProperties       = */ ILTypeProp::Size_4 | ILTypeProp::Integer, \
+   /* .childProperties      = */ THREE_CHILD(TR::Address, TR::Address, TR::Int32), \
+   /* .swapChildrenOpCode   = */ TR::BadILOp, \
+   /* .reverseBranchOpCode  = */ TR::BadILOp, \
+   /* .booleanCompareOpCode = */ TR::BadILOp, \
+   /* .ifCompareOpCode      = */ TR::BadILOp, \
+   /* .description          =    Inline code for memory comparison of part of an array */ \
+)
+OPCODE_MACRO(\
    /* .opcode               = */ allocationFence, \
    /* .name                 = */ "allocationFence", \
    /* .properties1          = */ ILProp1::TreeTop, \
