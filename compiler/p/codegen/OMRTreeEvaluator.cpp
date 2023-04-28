@@ -5498,7 +5498,7 @@ static TR::Register *inlineArrayCmp(TR::Node *node, TR::CodeGenerator *cg, bool 
    generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::addi2, node, src1AddrReg, src1AddrReg, -1*byteLen);
    generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::addi2, node, src2AddrReg, src2AddrReg, -1*byteLen);
 
-   generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::srawi, node, tempReg, byteLenRemainingRegister, (byteLen == 8) ? 3 : 2);
+   generateTrg1Src1ImmInstruction(cg, isArrayCmpLen ? TR::InstOpCode::sradi : TR::InstOpCode::srawi, node, tempReg, byteLenRemainingRegister, (byteLen == 8) ? 3 : 2);
    generateSrc1Instruction(cg, TR::InstOpCode::mtctr, node, tempReg);
 
    loopStartLabel = generateLabelSymbol(cg);
@@ -5541,7 +5541,12 @@ static TR::Register *inlineArrayCmp(TR::Node *node, TR::CodeGenerator *cg, bool 
 
    generateTrg1Src1ImmInstruction(cg, (byteLen == 8) ? TR::InstOpCode::cmpi8 : TR::InstOpCode::cmpi4, node, condReg2, byteLenRemainingRegister, 0);
    generateTrg1Src2Instruction(cg, TR::InstOpCode::subf, node, byteLenRemainingRegister, byteLenRemainingRegister, tempReg);
-   generateShiftLeftImmediate(cg, node, byteLenRemainingRegister, byteLenRemainingRegister, (byteLen == 8) ? 3 : 2);
+
+   if (isArrayCmpLen)
+      generateShiftLeftImmediateLong(cg, node, byteLenRemainingRegister, byteLenRemainingRegister, (byteLen == 8) ? 3 : 2);
+   else
+      generateShiftLeftImmediate(cg, node, byteLenRemainingRegister, byteLenRemainingRegister, (byteLen == 8) ? 3 : 2);
+
    generateConditionalBranchInstruction(cg, TR::InstOpCode::bne, node, midLabel, condReg2);
 
    generateTrg1Src2Instruction(cg, (byteLen == 8) ? TR::InstOpCode::cmp8 : TR::InstOpCode::cmp4, node, condReg2, byteLenRemainingRegister, byteLenRegister);
